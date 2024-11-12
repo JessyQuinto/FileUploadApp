@@ -1,0 +1,49 @@
+﻿@page
+@model FileUploadApp.Pages.IndexModel
+@{
+    ViewData["Title"] = "Subir y Visualizar Archivos";
+}
+
+<h1>Subir un Archivo</h1>
+<form id="uploadForm" method="post" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="file" />
+    <button type="button" onclick="uploadFile()">Subir</button>
+</form>
+
+<script>
+    async function uploadFile() {
+        const formData = new FormData();
+        const fileInput = document.getElementById("fileInput");
+        formData.append("file", fileInput.files[0]);
+
+        try {
+            const response = await fetch("/api/fileupload/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al subir el archivo");
+            }
+
+            const result = await response.json();
+            alert("Archivo subido exitosamente: " + result.fileMetadata.BlobUrl);
+            location.reload();
+        } catch (error) {
+            console.error("Error en la carga del archivo:", error);
+        }
+    }
+</script>
+
+@if (Model.Files != null && Model.Files.Any())
+{
+    <h2>Archivos Subidos</h2>
+    <ul>
+        @foreach (var file in Model.Files)
+        {
+            <li>
+                <a href="@file.BlobUrl" target="_blank">@file.FileName</a> - @file.UploadDate
+            </li>
+        }
+    </ul>
+}

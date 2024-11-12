@@ -19,7 +19,7 @@ namespace FileUploadApp.Pages
         // Lista de archivos cargados para mostrar en la página
         public List<FileMetadata> Files { get; set; }
 
-        // Cargar la lista de archivos desde la base de datos
+        // Cargar la lista de archivos desde la base de datoss
         public async Task<IActionResult> OnGetAsync()
         {
             Files = await _context.Files.ToListAsync();

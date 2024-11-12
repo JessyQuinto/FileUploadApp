@@ -20,6 +20,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseStaticFiles();
 
 // Mapea las Razor Pages y los controladores
 app.MapRazorPages();

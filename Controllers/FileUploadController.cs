@@ -53,4 +53,24 @@ public class FileUploadController : ControllerBase
         return Ok(new { fileMetadata.BlobUrl });
     }
 
+    [HttpDelete("delete/{id}")]
+    public async Task<IActionResult> DeleteFile(int id)
+    {
+        var fileMetadata = await _context.Files.FindAsync(id);
+        if (fileMetadata == null)
+            return NotFound("File not found.");
+
+        // Eliminar archivo de Azure Blob Storage
+        var containerClient = _blobServiceClient.GetBlobContainerClient("almacenamientoblob");
+        var blobClient = containerClient.GetBlobClient(fileMetadata.BlobUrl);
+        await blobClient.DeleteIfExistsAsync();
+
+        // Eliminar metadata de la base de datos
+        _context.Files.Remove(fileMetadata);
+        await _context.SaveChangesAsync();
+
+        return Ok("File deleted successfully.");
+    }
+
+
 }
